@@ -1,0 +1,36 @@
+# bin/compile
+#!/usr/bin/env bash
+set -e
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+# Specify the desired SQLite3 version
+SQLITE_VERSION="3.39.3"
+SQLITE_AUTOCONF="sqlite-autoconf-3390300" # Adjust based on the version
+
+echo "-----> Installing SQLite3 $SQLITE_VERSION"
+
+# Install dependencies (if needed)
+# Note: The build environment might already have necessary tools like gcc and make.
+
+# Create a directory for SQLite3 installation
+mkdir -p $BUILD_DIR/vendor/sqlite3
+
+cd /tmp
+
+# Download and extract SQLite3 source code
+wget https://www.sqlite.org/2022/${SQLITE_AUTOCONF}.tar.gz
+tar xzf ${SQLITE_AUTOCONF}.tar.gz
+
+cd ${SQLITE_AUTOCONF}
+
+# Configure and install SQLite3 to the vendor directory
+./configure --prefix=$BUILD_DIR/vendor/sqlite3
+make
+make install
+
+# Set environment variables for runtime
+mkdir -p $BUILD_DIR/.profile.d
+echo 'export PATH="$HOME/vendor/sqlite3/bin:$PATH"' > $BUILD_DIR/.profile.d/sqlite3.sh
+echo 'export LD_LIBRARY_PATH="$HOME/vendor/sqlite3/lib:$LD_LIBRARY_PATH"' >> $BUILD_DIR/.profile.d/sqlite3.sh

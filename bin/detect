@@ -1,0 +1,4 @@
+# bin/detect
+#!/usr/bin/env bash
+echo "Custom SQLite Buildpack"
+exit 0
